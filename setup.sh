@@ -82,9 +82,7 @@ read -p "Enter details (leave blank for default 'created using cryptonode.id hel
 INPUT_DETAILS=${INPUT_DETAILS:-"created using cryptonode.id helper"}
 # Helper scripts
 cd ${INSTALLATION_DIR}
-rm -rf list_keys.sh check_balance.sh create_validator.sh unjail_validator.sh check_validator.sh start_side.sh check_log.sh
-echo "${DAEMON_NAME} keys list" > list_keys.sh && chmod +x list_keys.sh
-echo "${DAEMON_NAME} q bank balances $(${DAEMON_NAME} keys show $VALIDATOR_KEY_NAME -a)" > check_balance.sh && chmod +x check_balance.sh
+rm -rf create_validator.sh unjail_validator.sh check_validator.sh start_${DAEMON_NAME}.sh stop_${DAEMON_NAME}.sh check_log.sh list_keys.sh check_balance.sh get_address.sh
 read -p "Do you want to use custom port number prefix (y/N)? " use_custom_port
 if [[ "$use_custom_port" =~ ^[Yy](es)?$ ]]; then
     read -p "Enter port number prefix (max 2 digits, not exceeding 50): " port_prefix
@@ -112,6 +110,7 @@ if [ -n "$PEERS" ] && [ -n "$RPC" ] && [ -n "$LATEST_HEIGHT" ] && [ -n "$TRUST_H
 else
     echo -e "\nError: One or more variables are empty. Please try again or change RPC\nExiting...\n"
 fi
+
 tee create_validator.sh > /dev/null <<EOF
 #!/bin/bash
 ${DAEMON_NAME} tx staking create-validator \\
@@ -142,16 +141,29 @@ tee check_validator.sh > /dev/null <<EOF
 ${DAEMON_NAME} query tendermint-validator-set | grep "\$(${DAEMON_NAME} tendermint show-address)"
 EOF
 chmod +x check_validator.sh
+
 tee start_${DAEMON_NAME}.sh > /dev/null <<EOF
 sudo systemctl daemon-reload
 sudo systemctl enable ${DAEMON_NAME}
 sudo systemctl restart ${DAEMON_NAME}
 EOF
 chmod +x start_${DAEMON_NAME}.sh
+tee stop_${DAEMON_NAME}.sh > /dev/null <<EOF
+sudo systemctl stop ${DAEMON_NAME}
+EOF
+chmod +x stop_${DAEMON_NAME}.sh
 tee check_log.sh > /dev/null <<EOF
 sudo journalctl -u ${DAEMON_NAME} -f
 EOF
 chmod +x check_log.sh
+
+echo "${DAEMON_NAME} keys list" > list_keys.sh && chmod +x list_keys.sh
+echo "${DAEMON_NAME} q bank balances $(${DAEMON_NAME} keys show $VALIDATOR_KEY_NAME -a)" > check_balance.sh && chmod +x check_balance.sh
+tee get_address.sh > /dev/null <<EOF
+#!/bin/bash
+echo "0x\$(evmosd debug addr \$(evmosd keys show ${VALIDATOR_KEY_NAME} -a) | grep hex | awk '{print $3}')"
+EOF
+chmod +x get_address.sh
 
 if ! command -v cosmovisor > /dev/null 2>&1 || ! which cosmovisor &> /dev/null; then
     wget https://github.com/cosmos/cosmos-sdk/releases/download/cosmovisor%2Fv1.5.0/cosmovisor-v1.5.0-linux-amd64.tar.gz

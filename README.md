@@ -8,3 +8,15 @@
     cd 0g-evmos && chmod ug+x *.sh && ./setup.sh
 #### follow the instruction and then run below command to start the node :
     ./start_evmosd.sh && ./check_log.sh
+### Available helper tools :
+    ./start_evmosd.sh
+    ./stop_evmosd.sh
+    ./check_log.sh
+    
+    ./create_validator.sh
+    ./unjail_validator.sh
+    ./check_validator.sh
+
+    ./list_keys.sh
+    ./check_balance.sh
+    ./get_address.sh
