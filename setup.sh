@@ -63,7 +63,7 @@ fi
 ${DAEMON_NAME} config chain-id $CHAIN_ID
 ${DAEMON_NAME} init $VALIDATOR_KEY_NAME --chain-id=$CHAIN_ID
 ${DAEMON_NAME} keys list
-wget https://github.com/0glabs/0g-evmos/releases/download/v1.0.0-testnet/genesis.json -O ${DAEMON_HOME}/config/genesis.json
+wget https://github.com/0Espress0/0g-evmos/blob/master/genesis.json -O ${DAEMON_HOME}/config/genesis.json
 sed -i 's/seeds *=.*/seeds = "'"$SEEDS"'"/' ${DAEMON_HOME}/config/config.toml
 sed -i 's/minimum-gas-prices *=.*/minimum-gas-prices = "0.0025'"$DENOM"'"/' ${DAEMON_HOME}/config/app.toml
 sed -i \
