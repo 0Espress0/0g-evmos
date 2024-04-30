@@ -3,7 +3,7 @@
     apt-get update -y && apt-get install git -y
 ### Steps
 #### Clone this repository :
-    git clone https://github.com/CryptoNodeID/0g-evmos.git
+    git clone https://github.com/0Espress0/0g-evmos.git
 #### run setup command : 
     cd 0g-evmos && chmod ug+x *.sh && ./setup.sh
 #### follow the instruction and then run below command to start the node :
